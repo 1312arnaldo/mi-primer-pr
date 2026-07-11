@@ -1,6 +1,6 @@
 # mi-primer-pr
 
-Este repositorio fue creado para practicar el flujo de trabajo de Git y GitHub: hacer cambios, subirlos a una rama y enviarlos mediante un Pull Requet.
+Este repositorio fue creado para practicar el flujo de trabajo de Git y GitHub: hacer cambios, subirlos a una rama y enviarlos mediante un Pull Request.
 
 ## Objetivo
 
