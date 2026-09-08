@@ -83,11 +83,11 @@ fun PantallaEstadisticas(vm: AppViewModel) {
             TarjetaGrande(
                 titulo = "Peso",
                 subtitulo = tPeso.mensaje,
-                color = if (tPeso.veredicto == Veredicto.BAJANDO) Colores.VerdeSuave
-                else MaterialTheme.colorScheme.surface,
+                color = if (tPeso.veredicto == Veredicto.BAJANDO) Colores.exitoSuave
+                else Colores.tarjeta,
             ) {
                 Spacer(Modifier.height(8.dp))
-                Etiqueta(tPeso.cobertura.texto, Colores.AzulSuave)
+                Etiqueta(tPeso.cobertura.texto, Colores.infoSuave)
                 Spacer(Modifier.height(8.dp))
                 promediosPeso.takeLast(6).forEach {
                     FilaDato(
@@ -107,11 +107,11 @@ fun PantallaEstadisticas(vm: AppViewModel) {
             TarjetaGrande(
                 titulo = "Cintura",
                 subtitulo = tCintura.mensaje,
-                color = if (tCintura.veredicto == Veredicto.BAJANDO) Colores.VerdeSuave
-                else MaterialTheme.colorScheme.surface,
+                color = if (tCintura.veredicto == Veredicto.BAJANDO) Colores.exitoSuave
+                else Colores.tarjeta,
             ) {
                 Spacer(Modifier.height(8.dp))
-                Etiqueta(tCintura.cobertura.texto, Colores.AzulSuave)
+                Etiqueta(tCintura.cobertura.texto, Colores.infoSuave)
                 Spacer(Modifier.height(8.dp))
                 cinturas.takeLast(6).forEach {
                     FilaDato(Hora12.fechaCorta(java.time.LocalDate.parse(it.fechaIso)), "${it.valor} cm")
@@ -125,7 +125,7 @@ fun PantallaEstadisticas(vm: AppViewModel) {
             ) {
                 Aviso(
                     "La bascula no se mueve pero la cintura baja. Eso cuenta como progreso.",
-                    Colores.VerdeSuave,
+                    Colores.exitoSuave,
                 )
             }
         }

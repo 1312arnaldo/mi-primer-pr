@@ -34,6 +34,8 @@ data class AjustesEntidad(
     /** Recogida de martes y jueves: "7 y algo", estimacion editable. */
     val horaRecogidaMinutosDesdeMedianoche: Int = 19 * 60 + 15,
     val horaRecogidaConfirmada: Boolean = false,
+    /** AUTOMATICO | CLARO | OSCURO */
+    val tema: String = "AUTOMATICO",
     val alarmasExactasDisponibles: Boolean = false,
     val avisosDeChatGptPausados: Boolean = false,
 )

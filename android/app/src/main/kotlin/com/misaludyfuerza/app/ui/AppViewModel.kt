@@ -96,9 +96,21 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     private val _ajustes = MutableStateFlow<AjustesEntidad?>(null)
     val ajustes: StateFlow<AjustesEntidad?> = _ajustes.asStateFlow()
 
+    private val _tema = MutableStateFlow(ModoTema.AUTOMATICO)
+    val tema: StateFlow<ModoTema> = _tema.asStateFlow()
+
+    fun cambiarTema(modo: ModoTema) = viewModelScope.launch {
+        _tema.value = modo
+        val actuales = repo.ajustes().copy(tema = modo.name)
+        repo.guardarAjustes(actuales)
+        _ajustes.value = actuales
+    }
+
     init {
         viewModelScope.launch {
-            _ajustes.value = repo.ajustes()
+            val a = repo.ajustes()
+            _ajustes.value = a
+            _tema.value = runCatching { ModoTema.valueOf(a.tema) }.getOrDefault(ModoTema.AUTOMATICO)
             refrescarSalud()
         }
     }

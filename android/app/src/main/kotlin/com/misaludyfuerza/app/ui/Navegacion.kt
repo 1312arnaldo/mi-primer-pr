@@ -56,8 +56,10 @@ fun AplicacionUi(
     abrirAjustesAlarmas: () -> Unit,
     abrirAjustesNotificaciones: () -> Unit,
 ) {
-    TemaMiSalud {
-        val vm: AppViewModel = viewModel()
+    val vm: AppViewModel = viewModel()
+    val tema by vm.tema.collectAsStateWithLifecycle()
+
+    TemaMiSalud(modo = tema) {
         val nav = rememberNavController()
         val snackbar = remember { SnackbarHostState() }
         val mensaje by vm.mensaje.collectAsStateWithLifecycle()

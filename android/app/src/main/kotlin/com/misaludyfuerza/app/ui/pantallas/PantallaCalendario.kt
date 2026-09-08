@@ -52,7 +52,7 @@ fun PantallaCalendario(vm: AppViewModel) {
                     "${Hora12.fechaLarga(it)} - ${Hora12.hora(com.misaludyfuerza.core.agenda.Custodia.INICIO_SABADO)} " +
                         "hasta el lunes a las ${Hora12.hora(com.misaludyfuerza.core.agenda.Custodia.FIN_LUNES)}"
                 },
-                color = Colores.AzulSuave,
+                color = Colores.infoSuave,
             )
         }
 
@@ -74,14 +74,14 @@ fun PantallaCalendario(vm: AppViewModel) {
                 color = if (cfg.custodia.esFinDeSemanaDeCustodia(d) &&
                     d.dayOfWeek in setOf(java.time.DayOfWeek.SATURDAY, java.time.DayOfWeek.SUNDAY)
                 ) {
-                    Colores.AzulSuave
+                    Colores.infoSuave
                 } else {
-                    MaterialTheme.colorScheme.surface
+                    Colores.tarjeta
                 },
             ) {
                 if (conflictos.isNotEmpty()) {
                     Spacer(Modifier.height(8.dp))
-                    conflictos.forEach { Etiqueta(it.descripcion, Colores.AmbarSuave) }
+                    conflictos.forEach { Etiqueta(it.descripcion, Colores.avisoSuave) }
                 }
             }
         }

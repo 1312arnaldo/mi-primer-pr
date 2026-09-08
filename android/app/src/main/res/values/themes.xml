@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.MiSaludYFuerza" parent="android:Theme.Material.Light.NoActionBar">
+    <!-- Tema de arranque. Compose dibuja el resto; aqui solo evitamos el parpadeo
+         blanco al abrir y dejamos que el sistema decida los iconos de estado. -->
+    <style name="Theme.MiSaludYFuerza" parent="android:Theme.DeviceDefault.DayNight.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 </resources>

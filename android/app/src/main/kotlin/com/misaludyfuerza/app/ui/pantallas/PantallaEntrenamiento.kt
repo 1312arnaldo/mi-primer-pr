@@ -63,7 +63,7 @@ fun PantallaEntrenamiento(vm: AppViewModel) {
         item { Aviso(autorizacion.textoAviso) }
 
         respuestaSintoma?.let {
-            item { Aviso(it.mensaje, Colores.RojoSuave) }
+            item { Aviso(it.mensaje, Colores.peligroSuave) }
         }
 
         if (rutina == null) {
@@ -76,7 +76,7 @@ fun PantallaEntrenamiento(vm: AppViewModel) {
             }
         } else {
             item {
-                TarjetaGrande(titulo = "Como entrenar hoy", color = Colores.AzulSuave) {
+                TarjetaGrande(titulo = "Como entrenar hoy", color = Colores.infoSuave) {
                     Spacer(Modifier.height(6.dp))
                     RutinasBase.ADVERTENCIAS.forEach {
                         Text("- $it", style = MaterialTheme.typography.bodyMedium)
@@ -103,9 +103,9 @@ fun PantallaEntrenamiento(vm: AppViewModel) {
                     titulo = ej.nombre,
                     subtitulo = "${ej.maquina} - ${ej.seriesIniciales} series de ${ej.rangoTexto}",
                     color = when (evaluacion.veredicto) {
-                        VeredictoEjercicio.BLOQUEADO -> Colores.RojoSuave
-                        VeredictoEjercicio.REQUIERE_REVISION -> Colores.AmbarSuave
-                        else -> MaterialTheme.colorScheme.surface
+                        VeredictoEjercicio.BLOQUEADO -> Colores.peligroSuave
+                        VeredictoEjercicio.REQUIERE_REVISION -> Colores.avisoSuave
+                        else -> Colores.tarjeta
                     },
                 ) {
                     Spacer(Modifier.height(6.dp))
@@ -122,7 +122,7 @@ fun PantallaEntrenamiento(vm: AppViewModel) {
                                 TipoPropuesta.CONGELAR_POR_SINTOMA -> "Congelado por sintomas"
                                 TipoPropuesta.ESPERAR_AUTORIZACION -> "En espera de autorizacion"
                             },
-                            Colores.AzulSuave,
+                            Colores.infoSuave,
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(p.mensaje, style = MaterialTheme.typography.bodyMedium)

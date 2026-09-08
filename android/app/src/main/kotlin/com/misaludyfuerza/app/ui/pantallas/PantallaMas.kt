@@ -1,7 +1,9 @@
 package com.misaludyfuerza.app.ui.pantallas
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -32,6 +34,7 @@ import com.misaludyfuerza.app.salud.IntegracionGimnasio
 import com.misaludyfuerza.app.ui.AppViewModel
 import com.misaludyfuerza.app.ui.Aviso
 import com.misaludyfuerza.app.ui.Colores
+import com.misaludyfuerza.app.ui.ModoTema
 import com.misaludyfuerza.app.ui.Encabezado
 import com.misaludyfuerza.app.ui.Etiqueta
 import com.misaludyfuerza.app.ui.FilaDato
@@ -54,6 +57,7 @@ fun PantallaMas(
     val autorizacion by vm.autorizacion.collectAsStateWithLifecycle()
     val ajustes by vm.ajustes.collectAsStateWithLifecycle()
     val vistaPrevia by vm.vistaPrevia.collectAsStateWithLifecycle()
+    val tema by vm.tema.collectAsStateWithLifecycle()
 
     val pedirPermisosSalud = rememberLauncherForActivityResult(vm.contratoPermisosSalud()) {
         vm.refrescarSalud()
@@ -65,14 +69,49 @@ fun PantallaMas(
     val desde = fecha.minusDays(6)
 
     LazyColumn(Modifier.fillMaxSize()) {
-        item { Encabezado("Mas", "Salud, avisos, compartir y ajustes") }
+        item { Encabezado("Mas", "Apariencia, salud, avisos, compartir y ajustes") }
+
+        // ---------------------------------------------------------- apariencia
+        item {
+            TarjetaGrande(
+                titulo = "Apariencia",
+                subtitulo = "Elige como quieres ver la app. \"Automatico\" sigue el ajuste de tu telefono.",
+            ) {
+                Spacer(Modifier.height(14.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    ModoTema.entries.forEach { modo ->
+                        val activo = tema == modo
+                        val etiqueta = when (modo) {
+                            ModoTema.AUTOMATICO -> "Automatico"
+                            ModoTema.CLARO -> "Claro"
+                            ModoTema.OSCURO -> "Oscuro"
+                        }
+                        if (activo) {
+                            Button(
+                                onClick = { vm.cambiarTema(modo) },
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(50),
+                                contentPadding = PaddingValues(vertical = 12.dp),
+                            ) { Text(etiqueta) }
+                        } else {
+                            OutlinedButton(
+                                onClick = { vm.cambiarTema(modo) },
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(50),
+                                contentPadding = PaddingValues(vertical = 12.dp),
+                            ) { Text(etiqueta) }
+                        }
+                    }
+                }
+            }
+        }
 
         // ---------------------------------------------------------- autorizacion
         item {
             TarjetaGrande(
                 titulo = "Autorizacion profesional",
                 subtitulo = autorizacion.textoAviso,
-                color = Colores.AmbarSuave,
+                color = Colores.avisoSuave,
             ) {
                 Spacer(Modifier.height(8.dp))
                 FilaDato("Estado", autorizacion.estado.etiqueta)
@@ -226,7 +265,7 @@ fun PantallaMas(
             TarjetaGrande(
                 titulo = IntegracionGimnasio.NOMBRE,
                 subtitulo = IntegracionGimnasio.ESTADO,
-                color = Colores.AmbarSuave,
+                color = Colores.avisoSuave,
             ) {
                 Spacer(Modifier.height(6.dp))
                 Text(IntegracionGimnasio.EXPLICACION, style = MaterialTheme.typography.bodyMedium)
@@ -311,7 +350,7 @@ fun PantallaMas(
             Aviso(
                 "Todo se guarda solo en este telefono y funciona sin internet. No se envian " +
                     "datos de salud a ningun servidor ni a ninguna analitica.",
-                Colores.VerdeSuave,
+                Colores.exitoSuave,
             )
         }
 

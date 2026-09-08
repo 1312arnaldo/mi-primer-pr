@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.TextButton
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +49,7 @@ fun PantallaComidas(vm: AppViewModel) {
         item { Encabezado("Comidas", Hora12.fechaLarga(fecha)) }
 
         item {
-            TarjetaGrande(titulo = "Objetivo del dia", color = Colores.AzulSuave) {
+            TarjetaGrande(titulo = "Objetivo del dia", color = Colores.infoSuave) {
                 Spacer(Modifier.height(8.dp))
                 FilaDato("Objetivo", "${objetivo.kcal} kcal - ${objetivo.proteinaMinG}-${objetivo.proteinaMaxG} g proteina")
                 FilaDato("Menu de hoy", "${totales.kcal.toInt()} kcal - ${totales.proteinaG.toInt()} g proteina")
@@ -74,31 +78,41 @@ fun PantallaComidas(vm: AppViewModel) {
                         (it.nota?.let { n -> " ($n)" } ?: "")
                 },
                 color = when (estado) {
-                    EstadoComida.COMI, EstadoComida.CAMBIE -> Colores.VerdeSuave
-                    EstadoComida.NO_COMI -> Colores.RojoSuave
-                    else -> MaterialTheme.colorScheme.surface
+                    EstadoComida.COMI, EstadoComida.CAMBIE -> Colores.exitoSuave
+                    EstadoComida.NO_COMI -> Colores.peligroSuave
+                    else -> Colores.tarjeta
                 },
             ) {
                 Spacer(Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Etiqueta("${t.kcal.toInt()} kcal", Colores.AzulSuave)
-                    Etiqueta("${t.proteinaG.toInt()} g proteina", Colores.AzulSuave)
-                    Etiqueta(estado.etiqueta, Colores.AmbarSuave)
+                    Etiqueta("${t.kcal.toInt()} kcal", Colores.infoSuave)
+                    Etiqueta("${t.proteinaG.toInt()} g proteina", Colores.infoSuave)
+                    Etiqueta(estado.etiqueta, Colores.avisoSuave)
                 }
                 comida.nota?.let {
                     Spacer(Modifier.height(6.dp))
                     Text(it, style = MaterialTheme.typography.bodyMedium)
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    TextButton(onClick = { vm.registrarComida(comida.tipo, EstadoComida.COMI) }) {
-                        Text("Comi")
-                    }
-                    TextButton(onClick = { vm.registrarComida(comida.tipo, EstadoComida.CAMBIE) }) {
-                        Text("Cambie")
-                    }
-                    TextButton(onClick = { vm.registrarComida(comida.tipo, EstadoComida.NO_COMI) }) {
-                        Text("No comi")
-                    }
+                Spacer(Modifier.height(14.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Button(
+                        onClick = { vm.registrarComida(comida.tipo, EstadoComida.COMI) },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(50),
+                        contentPadding = PaddingValues(vertical = 12.dp),
+                    ) { Text("Comi") }
+                    FilledTonalButton(
+                        onClick = { vm.registrarComida(comida.tipo, EstadoComida.CAMBIE) },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(50),
+                        contentPadding = PaddingValues(vertical = 12.dp),
+                    ) { Text("Cambie") }
+                    FilledTonalButton(
+                        onClick = { vm.registrarComida(comida.tipo, EstadoComida.NO_COMI) },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(50),
+                        contentPadding = PaddingValues(vertical = 12.dp),
+                    ) { Text("No comi") }
                 }
 
                 val sustituciones = comida.porciones.firstOrNull()
@@ -146,7 +160,7 @@ fun PantallaComidas(vm: AppViewModel) {
             Aviso(
                 "Nunca se proponen pollo, huevo hervido ni avena, tampoco como sustitucion. " +
                     "El agua es orientativa (2 a 2.5 litros de bebidas), sin cuota obligatoria.",
-                Colores.VerdeSuave,
+                Colores.exitoSuave,
             )
         }
 

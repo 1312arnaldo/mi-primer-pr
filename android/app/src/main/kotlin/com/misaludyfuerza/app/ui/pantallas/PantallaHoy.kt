@@ -11,7 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -24,6 +27,7 @@ import com.misaludyfuerza.app.ui.Encabezado
 import com.misaludyfuerza.app.ui.Etiqueta
 import com.misaludyfuerza.app.ui.AppViewModel
 import com.misaludyfuerza.app.ui.TarjetaGrande
+import com.misaludyfuerza.app.ui.TituloSeccion
 import com.misaludyfuerza.core.agenda.EstadoEvento
 import com.misaludyfuerza.core.agenda.TipoEvento
 import com.misaludyfuerza.core.salud.EstadoAutorizacion
@@ -66,7 +70,7 @@ fun PantallaHoy(vm: AppViewModel) {
                         e.evento.nota?.let { append("\n").append(it) }
                     }
                 } ?: "Revisa el calendario para preparar manana.",
-                color = Colores.AzulSuave,
+                color = Colores.infoSuave,
             )
         }
 
@@ -92,7 +96,7 @@ fun PantallaHoy(vm: AppViewModel) {
                     "${Hora12.rango(it.evento.inicio, it.evento.fin ?: it.evento.inicio)} - " +
                         (it.evento.nota ?: "")
                 } ?: "Hoy no hay gimnasio programado.",
-                color = if (entreno != null) Colores.VerdeSuave else MaterialTheme.colorScheme.surface,
+                color = if (entreno != null) Colores.exitoSuave else Colores.tarjeta,
             )
         }
 
@@ -104,11 +108,7 @@ fun PantallaHoy(vm: AppViewModel) {
         }
 
         item {
-            Text(
-                "Agenda completa",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(start = 20.dp, top = 16.dp, bottom = 4.dp),
-            )
+            TituloSeccion("Agenda completa")
         }
 
         items(eventos, key = { it.evento.uid }) { e -> FilaEvento(e, vm) }
@@ -120,10 +120,10 @@ fun PantallaHoy(vm: AppViewModel) {
 @Composable
 private fun FilaEvento(e: EventoConEstado, vm: AppViewModel) {
     val color = when {
-        e.estado == EstadoEvento.HECHO -> Colores.VerdeSuave
-        e.estado == EstadoEvento.OMITIDO -> Colores.RojoSuave
-        e.evento.requiereValidacionMedica -> Colores.AmbarSuave
-        else -> MaterialTheme.colorScheme.surface
+        e.estado == EstadoEvento.HECHO -> Colores.exitoSuave
+        e.estado == EstadoEvento.OMITIDO -> Colores.peligroSuave
+        e.evento.requiereValidacionMedica -> Colores.avisoSuave
+        else -> Colores.tarjeta
     }
     TarjetaGrande(titulo = e.evento.titulo, color = color) {
         Spacer(Modifier.height(6.dp))
@@ -134,20 +134,36 @@ private fun FilaEvento(e: EventoConEstado, vm: AppViewModel) {
                 } else {
                     e.evento.horaVisible
                 },
-                Colores.AzulSuave,
+                Colores.infoSuave,
             )
-            if (!e.evento.confirmado) Etiqueta("Sin confirmar", Colores.AmbarSuave)
-            if (e.estado == EstadoEvento.HECHO) Etiqueta("Hecho", Colores.VerdeSuave)
-            if (e.estado == EstadoEvento.OMITIDO) Etiqueta("Omitido", Colores.RojoSuave)
+            if (!e.evento.confirmado) Etiqueta("Sin confirmar", Colores.avisoSuave)
+            if (e.estado == EstadoEvento.HECHO) Etiqueta("Hecho", Colores.exitoSuave)
+            if (e.estado == EstadoEvento.OMITIDO) Etiqueta("Omitido", Colores.peligroSuave)
         }
         e.evento.nota?.let {
             Spacer(Modifier.height(6.dp))
             Text(it, style = MaterialTheme.typography.bodyMedium)
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            TextButton(onClick = { vm.marcarEvento(e.evento, EstadoEvento.HECHO) }) { Text("Hecho") }
-            TextButton(onClick = { vm.posponerEvento(e.evento) }) { Text("Posponer") }
-            TextButton(onClick = { vm.marcarEvento(e.evento, EstadoEvento.OMITIDO) }) { Text("Omitir") }
+        Spacer(Modifier.height(14.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(
+                onClick = { vm.marcarEvento(e.evento, EstadoEvento.HECHO) },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(50),
+                contentPadding = PaddingValues(vertical = 12.dp),
+            ) { Text("Hecho") }
+            FilledTonalButton(
+                onClick = { vm.posponerEvento(e.evento) },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(50),
+                contentPadding = PaddingValues(vertical = 12.dp),
+            ) { Text("Posponer") }
+            FilledTonalButton(
+                onClick = { vm.marcarEvento(e.evento, EstadoEvento.OMITIDO) },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(50),
+                contentPadding = PaddingValues(vertical = 12.dp),
+            ) { Text("Omitir") }
         }
     }
 }
