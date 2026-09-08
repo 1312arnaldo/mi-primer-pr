@@ -1,1 +1,21 @@
 .claude/
+# Gradle / JVM
+.gradle/
+build/
+*/build/
+**/build/
+local.properties
+# Android
+.cxx/
+*.apk
+*.aab
+*.keystore
+*.jks
+# IDE
+.idea/
+*.iml
+.DS_Store
+# Datos personales: nunca subir datos de salud reales al repositorio
+/datos-personales/
+*.export.json
+*.export.csv
