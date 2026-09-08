@@ -2,6 +2,7 @@ package com.misaludyfuerza.app.salud
 
 import android.content.Context
 import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.HealthConnectFeatures
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.changes.DeletionChange
 import androidx.health.connect.client.changes.UpsertionChange
@@ -122,13 +123,35 @@ class GestorSalud(private val context: Context, private val repo: Repositorio) {
         (estado() as? EstadoHealthConnect.Disponible)?.permisosConcedidos ?: emptySet()
 
     /**
+     * Comprueba si este telefono admite lectura en segundo plano. No basta con
+     * declarar el permiso: la funcion puede no estar disponible segun la version de
+     * Health Connect, y en ese caso la app no promete sincronizacion continua.
+     */
+    fun lecturaEnSegundoPlanoDisponible(): Boolean {
+        val c = cliente ?: return false
+        return runCatching {
+            c.features.getFeatureStatus(
+                HealthConnectFeatures.FEATURE_READ_HEALTH_DATA_IN_BACKGROUND,
+            ) == HealthConnectFeatures.FEATURE_STATUS_AVAILABLE
+        }.getOrDefault(false)
+    }
+
+    /**
+     * Sin PERMISSION_READ_HEALTH_DATA_HISTORY, Health Connect solo deja leer los
+     * ultimos 30 dias de datos de otras apps. Por eso la ventana inicial es de 30
+     * dias y solo se amplia si el permiso de historial esta concedido.
+     */
+    suspend fun diasLegiblesHaciaAtras(): Long =
+        if (HealthPermission.PERMISSION_READ_HEALTH_DATA_HISTORY in permisosConcedidos()) 365 else 30
+
+    /**
      * Sincroniza un tipo de dato.
      *
      * Primera vez: lee la ventana indicada y guarda un token de cambios.
      * Siguientes: usa el token para procesar altas, modificaciones y borrados sin
      * releer todo, y sin duplicar lo ya guardado.
      */
-    suspend fun sincronizar(tipo: TipoDatoSalud, diasHaciaAtras: Long = 30): Result<Int> {
+    suspend fun sincronizar(tipo: TipoDatoSalud, diasHaciaAtras: Long? = null): Result<Int> {
         val c = cliente ?: return Result.failure(
             IllegalStateException("Health Connect no esta disponible en este telefono."),
         )
@@ -144,7 +167,7 @@ class GestorSalud(private val context: Context, private val repo: Repositorio) {
 
             if (previo?.tokenCambios == null) {
                 val fin = Instant.now()
-                val inicio = fin.minus(Duration.ofDays(diasHaciaAtras))
+                val inicio = fin.minus(Duration.ofDays(diasHaciaAtras ?: diasLegiblesHaciaAtras()))
                 val registros = leer(c, tipo, inicio, fin)
                 repo.saludDao.insertarSiEsNuevo(registros)
                 cambiados = registros.size

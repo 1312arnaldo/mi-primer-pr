@@ -88,7 +88,7 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.10.0")
 
     // Health Connect: lectura de datos que Samsung Health haya sincronizado.
-    implementation("androidx.health.connect:connect-client:1.1.0-alpha10")
+    implementation("androidx.health.connect:connect-client:1.2.0-alpha06")
 
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
