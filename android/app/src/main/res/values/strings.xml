@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_nombre">Mi Salud y Fuerza</string>
+
+    <string name="canal_recordatorios_nombre">Recordatorios del plan</string>
+    <string name="canal_recordatorios_desc">Avisos de comidas, gimnasio, mediciones y familia.</string>
+    <string name="canal_prueba_nombre">Pruebas</string>
+    <string name="canal_prueba_desc">Notificacion de prueba para comprobar permisos y el reloj.</string>
+
+    <string name="accion_hecho">Hecho</string>
+    <string name="accion_posponer">Posponer</string>
+    <string name="accion_omitir">Omitir</string>
+
+    <string name="salud_rationale">
+        Mi Salud y Fuerza lee tus datos de Health Connect solo para mostrarte tu propio
+        progreso dentro de la app: pasos, sesiones, sueno, frecuencia cardiaca, peso y
+        energia, y unicamente los tipos que autorices. No se envian a ningun servidor,
+        no se comparten con terceros y puedes revocar el acceso cuando quieras.
+    </string>
+</resources>

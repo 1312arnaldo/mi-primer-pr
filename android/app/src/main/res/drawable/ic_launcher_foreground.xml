@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Silueta simple de mancuerna: identidad de la app sin depender de recursos externos. -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,48h6v12h-6z M72,48h6v12h-6z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M38,44h6v20h-6z M64,44h6v20h-6z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M44,51h20v6h-20z" />
+</vector>
