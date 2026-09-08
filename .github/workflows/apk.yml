@@ -66,12 +66,18 @@ jobs:
           cp "$APK" mi-salud-y-fuerza.apk
           gh release delete apk-ultima --yes --cleanup-tag || true
           gh release create apk-ultima mi-salud-y-fuerza.apk \
-            --title "Mi Salud y Fuerza - ultima version de prueba" \
-            --notes "APK de prueba compilado automaticamente desde la rama ${{ github.ref_name }}.
+            --title "Mi Salud y Fuerza - version ${{ github.run_number }}" \
+            --notes "APK compilado automaticamente desde la rama ${{ github.ref_name }}.
 
-          Descarga \`mi-salud-y-fuerza.apk\` desde el telefono y abrelo para instalarlo.
-          Android pedira permiso para instalar desde esta fuente: es normal en una app
-          que no viene de Play Store.
+          **Como instalar desde el telefono**
 
-          Commit: ${{ github.sha }}" \
+          1. Descarga \`mi-salud-y-fuerza.apk\` y abrelo.
+          2. Si Android pide permiso para instalar desde esta fuente, concedelo.
+          3. Si Google Play Protect avisa de que no conoce al desarrollador, toca
+             **Instalar de todas formas** (el texto pequeno, no el boton azul). Es
+             normal: la app no viene de Play Store.
+
+          Las actualizaciones se instalan encima sin desinstalar ni perder datos.
+
+          Version: ${{ github.run_number }} - Commit: ${{ github.sha }}" \
             --prerelease

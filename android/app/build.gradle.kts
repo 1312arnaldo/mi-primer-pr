@@ -10,25 +10,51 @@ android {
     namespace = "com.misaludyfuerza.app"
     compileSdk = 35
 
+    /**
+     * Clave de firma fija.
+     *
+     * Sin esto, cada compilacion en GitHub generaria una clave de depuracion
+     * distinta y Android rechazaria la actualizacion con "firma no coincide",
+     * obligando a desinstalar y perder los datos en cada version.
+     *
+     * Es una clave de USO PERSONAL, no de publicacion. Vive en el repositorio (que
+     * es publico) a proposito, para que cualquier compilacion produzca la misma
+     * firma. No sirve para publicar en Play Store: para eso haria falta una clave
+     * privada guardada como secreto del repositorio.
+     */
+    signingConfigs {
+        create("personal") {
+            storeFile = file("firma-desarrollo.jks")
+            storePassword = "android"
+            keyAlias = "misaludyfuerza"
+            keyPassword = "android"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.misaludyfuerza.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        // Cada compilacion en GitHub sube el numero, para que Android reconozca
+        // la nueva version como una actualizacion.
+        versionCode = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInt()
+        versionName = "0.1.${System.getenv("GITHUB_RUN_NUMBER") ?: "0"}"
         // La app es de uso individual: sin analitica ni telemetria.
         resourceConfigurations += listOf("es")
     }
 
     buildTypes {
         debug {
-            applicationIdSuffix = ".debug"
+            // Sin sufijo: es la app que el usuario instala de verdad, no una
+            // variante de pruebas paralela.
             isDebuggable = true
+            signingConfig = signingConfigs.getByName("personal")
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("personal")
         }
     }
 

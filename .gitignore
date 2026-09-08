@@ -11,6 +11,9 @@ local.properties
 *.aab
 *.keystore
 *.jks
+# Excepcion: clave de firma de uso personal, necesaria para que las
+# actualizaciones se instalen encima sin desinstalar.
+!android/app/firma-desarrollo.jks
 # IDE
 .idea/
 *.iml
