@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Tema de arranque en modo claro. Compose dibuja el resto de la interfaz;
-         esto solo evita el parpadeo blanco al abrir. -->
-    <style name="Theme.MiSaludYFuerza" parent="android:Theme.Material.Light.NoActionBar">
+    <!-- Misma pantalla de arranque, con el fondo oscuro y los iconos de estado
+         en claro para que se lean. -->
+    <style name="Theme.MiSaludYFuerza" parent="android:Theme.Material.NoActionBar">
         <item name="android:windowBackground">@color/fondo_arranque</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

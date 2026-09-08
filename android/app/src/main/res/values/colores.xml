@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#14548C</color>
+    <!-- Fondo de arranque: coincide con el fondo que dibuja Compose,
+         asi no hay parpadeo al abrir la app. -->
+    <color name="fondo_arranque">#F6F7FA</color>
 </resources>
