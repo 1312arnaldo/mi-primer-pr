@@ -2,7 +2,6 @@ package com.misaludyfuerza.app.salud
 
 import android.content.Context
 import androidx.health.connect.client.HealthConnectClient
-import androidx.health.connect.client.HealthConnectFeatures
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.changes.DeletionChange
 import androidx.health.connect.client.changes.UpsertionChange
@@ -97,15 +96,19 @@ class GestorSalud(private val context: Context, private val repo: Repositorio) {
 
     fun disponibilidad(): Int = HealthConnectClient.getSdkStatus(context)
 
+
     fun contratoDePermisos() = PermissionController.createRequestPermissionResultContract()
 
-    /** Permisos que se piden: uno por tipo, mas historial y lectura en segundo plano. */
+    /**
+     * Permisos que se piden: uno por cada tipo de dato, mas lectura en segundo plano.
+     *
+     * El permiso de historial (leer mas de 30 dias) NO se solicita: la version de
+     * connect-client que usa este proyecto no lo expone. Por eso la app se queda en
+     * la ventana de 30 dias y no promete acceso al historial completo.
+     */
     fun permisosSolicitados(tipos: Set<TipoDatoSalud>): Set<String> =
         tipos.map { it.permisoLectura }.toSet() +
-            setOf(
-                HealthPermission.PERMISSION_READ_HEALTH_DATA_HISTORY,
-                HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND,
-            )
+            setOf(HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND)
 
     suspend fun estado(): EstadoHealthConnect = when (disponibilidad()) {
         HealthConnectClient.SDK_UNAVAILABLE -> EstadoHealthConnect.NoDisponible
@@ -123,34 +126,16 @@ class GestorSalud(private val context: Context, private val repo: Repositorio) {
         (estado() as? EstadoHealthConnect.Disponible)?.permisosConcedidos ?: emptySet()
 
     /**
-     * Comprueba si este telefono admite lectura en segundo plano. No basta con
-     * declarar el permiso: la funcion puede no estar disponible segun la version de
-     * Health Connect, y en ese caso la app no promete sincronizacion continua.
-     */
-    fun lecturaEnSegundoPlanoDisponible(): Boolean {
-        val c = cliente ?: return false
-        return runCatching {
-            c.features.getFeatureStatus(
-                HealthConnectFeatures.FEATURE_READ_HEALTH_DATA_IN_BACKGROUND,
-            ) == HealthConnectFeatures.FEATURE_STATUS_AVAILABLE
-        }.getOrDefault(false)
-    }
-
-    /**
-     * Sin PERMISSION_READ_HEALTH_DATA_HISTORY, Health Connect solo deja leer los
-     * ultimos 30 dias de datos de otras apps. Por eso la ventana inicial es de 30
-     * dias y solo se amplia si el permiso de historial esta concedido.
-     */
-    suspend fun diasLegiblesHaciaAtras(): Long =
-        if (HealthPermission.PERMISSION_READ_HEALTH_DATA_HISTORY in permisosConcedidos()) 365 else 30
-
-    /**
-     * Sincroniza un tipo de dato.
+     * Ventana de lectura hacia atras.
      *
-     * Primera vez: lee la ventana indicada y guarda un token de cambios.
-     * Siguientes: usa el token para procesar altas, modificaciones y borrados sin
-     * releer todo, y sin duplicar lo ya guardado.
+     * Health Connect solo deja leer los ultimos 30 dias de datos de otras apps sin
+     * el permiso de historial. La version de la libreria que usa este proyecto no
+     * expone la comprobacion de ese permiso ni la de lectura en segundo plano, asi
+     * que se usa la ventana segura de 30 dias y NO se promete acceso al historial
+     * completo ni sincronizacion en segundo plano.
      */
+    fun diasLegiblesHaciaAtras(): Long = DIAS_SIN_PERMISO_DE_HISTORIAL
+
     suspend fun sincronizar(tipo: TipoDatoSalud, diasHaciaAtras: Long? = null): Result<Int> {
         val c = cliente ?: return Result.failure(
             IllegalStateException("Health Connect no esta disponible en este telefono."),
@@ -266,6 +251,11 @@ class GestorSalud(private val context: Context, private val repo: Repositorio) {
             dispositivo = meta.device?.model,
             ultimaModificacionIso = meta.lastModifiedTime.toString(),
         )
+    }
+
+    private companion object {
+        /** Limite de Health Connect para datos de otras apps sin permiso de historial. */
+        const val DIAS_SIN_PERMISO_DE_HISTORIAL = 30L
     }
 
     private suspend fun guardarEstado(

@@ -13,6 +13,8 @@ import com.misaludyfuerza.core.alimentacion.Adherencia
 import com.misaludyfuerza.core.alimentacion.MenuBase
 import com.misaludyfuerza.core.alimentacion.ObjetivoNutricional
 import com.misaludyfuerza.core.estadisticas.Series
+import com.misaludyfuerza.core.estadisticas.Tendencia
+import com.misaludyfuerza.core.estadisticas.Veredicto
 import com.misaludyfuerza.core.exportacion.BloqueSalud
 import com.misaludyfuerza.core.exportacion.ConstructorRevision
 import com.misaludyfuerza.core.exportacion.ExportadorIcs
@@ -118,20 +120,19 @@ class Exportador(private val repo: Repositorio, private val gestorSalud: GestorS
     }
 
     private fun lectura(
-        peso: com.misaludyfuerza.core.estadisticas.Tendencia,
-        cintura: com.misaludyfuerza.core.estadisticas.Tendencia,
-        volumen: com.misaludyfuerza.core.estadisticas.Tendencia,
+        peso: Tendencia,
+        cintura: Tendencia,
+        volumen: Tendencia,
     ): String {
-        val v = com.misaludyfuerza.core.estadisticas.Veredicto
         val senales = buildList {
-            if (cintura.veredicto == v.BAJANDO) add("la cintura baja")
-            if (volumen.veredicto == v.SUBIENDO) add("el volumen de entrenamiento sube")
-            if (peso.veredicto == v.BAJANDO) add("el peso promedio baja")
+            if (cintura.veredicto == Veredicto.BAJANDO) add("la cintura baja")
+            if (volumen.veredicto == Veredicto.SUBIENDO) add("el volumen de entrenamiento sube")
+            if (peso.veredicto == Veredicto.BAJANDO) add("el peso promedio baja")
         }
         return when {
             senales.isEmpty() ->
                 "Todavia no hay senales claras. Conviene revisar con 2-3 semanas de datos suficientes."
-            peso.veredicto == v.SIN_CAMBIO_CLARO ->
+            peso.veredicto == Veredicto.SIN_CAMBIO_CLARO ->
                 "Aunque la bascula no se mueve, ${senales.joinToString(" y ")}. Eso cuenta."
             else -> "Senales positivas: ${senales.joinToString(" y ")}."
         }
