@@ -30,7 +30,22 @@ jobs:
 
       - name: Compilar el APK de depuracion
         working-directory: android
-        run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew :app:assembleDebug --no-daemon 2>&1 | tee /tmp/build.log
+          estado=$?
+          exit $estado
+
+      # Deja los errores de Kotlin al final del registro, faciles de leer.
+      - name: Resumen de errores
+        if: failure()
+        shell: bash
+        run: |
+          echo "=================== ERRORES DE COMPILACION ==================="
+          grep -E "^e: |^w: .*error|error:" /tmp/build.log | head -80 || true
+          echo "=================== FIN DE ERRORES ==========================="
+          grep -cE "^e: " /tmp/build.log || true
 
       - name: Guardar el APK como artefacto
         if: always()
